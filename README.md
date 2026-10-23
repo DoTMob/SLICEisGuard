@@ -203,7 +203,7 @@ sequenceDiagram
     U->>S: add-client laptop --keepalive 25 --split-tunnel
     S->>M: read existing peers
     S->>S: pick next IP .2 and ::2
-    S->>S: wg genkey; wg pubkey
+    S->>S: wg genkey and wg pubkey
     S->>S: wg genpsk if PSK enabled
     S->>C: append new Peer block
     S->>M: record peer row
@@ -211,6 +211,7 @@ sequenceDiagram
     S->>W: wg set wg0 peer with allowed-ips
     S->>U: print config and QR code
 ```
+
 No interface restart. The peer is added live via `wg set`, so existing
 clients never lose their session when a new one joins.
 
