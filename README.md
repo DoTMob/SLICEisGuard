@@ -196,22 +196,21 @@ flowchart LR
 sequenceDiagram
     participant U as Operator
     participant S as sliceguard
-    participant M as manifest.txt
+    participant M as manifest
     participant C as wg0.conf
-    participant W as wg (kernel)
+    participant W as wg kernel
 
     U->>S: add-client laptop --keepalive 25 --split-tunnel
     S->>M: read existing peers
-    S->>S: next_client_ip() → .2, ::2
+    S->>S: pick next IP .2 and ::2
     S->>S: wg genkey; wg pubkey
-    S->>S: wg genpsk (if USE_PSK=y)
-    S->>C: append [Peer] block
-    S->>M: append laptop|pub|10.66.66.2|fd42::2|25|split|1|psk
-    S->>S: render /root/wg-clients/laptop.conf (0600)
-    S->>W: wg set wg0 peer pub allowed-ips ...
-    S->>U: print config + QR code
+    S->>S: wg genpsk if PSK enabled
+    S->>C: append new Peer block
+    S->>M: record peer row
+    S->>S: render client config, chmod 0600
+    S->>W: wg set wg0 peer with allowed-ips
+    S->>U: print config and QR code
 ```
-
 No interface restart. The peer is added live via `wg set`, so existing
 clients never lose their session when a new one joins.
 
